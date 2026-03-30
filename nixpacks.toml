@@ -1,2 +1,8 @@
 [variables]
 NIXPACKS_NODE_VERSION = "20"
+
+[phases.install]
+cmds = ["echo 'skip'"]
+
+[phases.build]
+cmds = ["npm install && vite build && cd server && npm install"]
