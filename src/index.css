@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* 글터 기본 스타일 */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  width: 100%;
+}
