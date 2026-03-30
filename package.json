@@ -8,7 +8,7 @@
     "server": "cd server && node index.js",
     "server:dev": "cd server && node --watch index.js",
     "build": "vite build",
-    "build:railway": "rm -f package-lock.json && npm install && vite build && cd server && rm -f package-lock.json && npm install",
+    "build:railway": "vite build && cd server && npm install",
     "start": "node server/index.js",
     "lint": "eslint .",
     "preview": "vite preview"
