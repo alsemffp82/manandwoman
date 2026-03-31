@@ -71,6 +71,7 @@ db.exec(`
 const migrations = [
   "ALTER TABLE users ADD COLUMN status TEXT NOT NULL DEFAULT 'approved'",
   "ALTER TABLE users ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0",
+  "ALTER TABLE posts ADD COLUMN visibility TEXT NOT NULL DEFAULT 'public'",
 ];
 for (const sql of migrations) {
   try { db.exec(sql); } catch { /* 이미 존재하면 무시 */ }

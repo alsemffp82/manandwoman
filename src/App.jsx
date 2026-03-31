@@ -153,8 +153,8 @@ export default function App() {
   const openWrite = (postToEdit = null) => {
     setEditingPost(postToEdit);
     setDraft(postToEdit
-      ? { title: postToEdit.title, content: postToEdit.content, music: postToEdit.music?.title || "", image: postToEdit.image || "", tags: postToEdit.tags.join(", ") }
-      : { title: "", content: "", music: "", image: "", tags: "" }
+      ? { title: postToEdit.title, content: postToEdit.content, music: postToEdit.music?.title || "", image: postToEdit.image || "", tags: postToEdit.tags.join(", "), visibility: postToEdit.visibility || "public" }
+      : { title: "", content: "", music: "", image: "", tags: "", visibility: "public" }
     );
     setView("write");
   };
@@ -166,6 +166,7 @@ export default function App() {
       image: draft.image || null,
       music_title: draft.music || null,
       tags: draft.tags.split(",").map((t) => t.trim()).filter(Boolean),
+      visibility: draft.visibility || "public",
     };
     try {
       if (editingPost) {
@@ -178,7 +179,7 @@ export default function App() {
         setPosts((prev) => [newPost, ...prev]);
         setView("feed");
       }
-      setDraft({ title: "", content: "", music: "", image: "", tags: "" });
+      setDraft({ title: "", content: "", music: "", image: "", tags: "", visibility: "public" });
       setEditingPost(null);
     } catch (e) { alert(e.message); }
   };
@@ -222,6 +223,7 @@ export default function App() {
 
       {view === "feed" && (
         <FeedView posts={posts} loading={postsLoading} currentUser={currentUser} isWriter={isWriter && !isPending}
+          isAdmin={isAdmin}
           onPostClick={(p) => { setSelectedPost(p); setView("post"); setIsPlaying(false); }}
           onAuthorClick={(id) => { setProfileTarget(id); setView("profile"); }}
           onLoginPrompt={() => setAuthModal("login")}
@@ -527,6 +529,130 @@ function ResetPasswordModal({ token, onClose, onDone }) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// 상단 공지 배너 (어드민 편집 가능)
+// ══════════════════════════════════════════════════════════════════════════════
+function TopBanner({ isAdmin }) {
+  const STORAGE_KEY = 'geulter_top_banner';
+  const defaultBanner = {
+    visible: true,
+    title: '글이 작품이 되는 공간, 글터',
+    desc: '당신의 이야기를 지금 바로 시작해보세요.',
+    imageUrl: '',
+    bgColor: '#fdf6ec',
+  };
+
+  const [banner, setBanner] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : defaultBanner;
+    } catch { return defaultBanner; }
+  });
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(banner);
+
+  const save = () => {
+    setBanner(draft);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+    setEditing(false);
+  };
+
+  if (!banner.visible && !isAdmin) return null;
+
+  return (
+    <>
+      {/* 배너 본체 */}
+      {banner.visible && (
+        <div className="relative w-full overflow-hidden" style={{ background: banner.bgColor, minHeight: '180px' }}>
+          <div className="max-w-5xl mx-auto px-5 py-10 flex flex-col sm:flex-row items-center gap-6">
+            {/* 텍스트 */}
+            <div className="flex-1 text-center sm:text-left">
+              <h2 className="text-2xl sm:text-3xl font-bold leading-tight mb-2" style={{ color: '#1a1a1a', fontFamily: 'Georgia, serif' }}>
+                {banner.title}
+              </h2>
+              <p className="text-sm text-gray-500 font-sans leading-relaxed max-w-md">
+                {banner.desc}
+              </p>
+            </div>
+            {/* 이미지 */}
+            {banner.imageUrl && (
+              <div className="flex-shrink-0 w-full sm:w-64 h-40 rounded-2xl overflow-hidden shadow-sm">
+                <img src={banner.imageUrl} alt="배너 이미지" className="w-full h-full object-cover" />
+              </div>
+            )}
+            {!banner.imageUrl && (
+              <div className="flex-shrink-0 w-full sm:w-56 h-36 rounded-2xl flex items-center justify-center text-6xl"
+                style={{ background: 'rgba(0,0,0,0.04)' }}>
+                🖼️
+              </div>
+            )}
+          </div>
+          {/* 어드민 편집 버튼 */}
+          {isAdmin && (
+            <button onClick={() => { setDraft(banner); setEditing(true); }}
+              className="absolute top-3 right-3 px-3 py-1 text-xs bg-white border border-gray-200 rounded-full text-gray-500 hover:bg-gray-50 font-sans shadow-sm">
+              ✏️ 배너 편집
+            </button>
+          )}
+        </div>
+      )}
+      {/* 어드민: 숨겨진 배너 표시 버튼 */}
+      {isAdmin && !banner.visible && (
+        <div className="bg-gray-50 border-b border-dashed border-gray-200 text-center py-2">
+          <button onClick={() => { setDraft(banner); setEditing(true); }}
+            className="text-xs text-gray-400 hover:text-gray-600 font-sans">
+            ➕ 상단 배너 켜기
+          </button>
+        </div>
+      )}
+
+      {/* 편집 모달 */}
+      {editing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 font-sans">
+            <h3 className="text-base font-bold text-gray-800 mb-4">상단 배너 편집</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs text-gray-500 block mb-1">제목</label>
+                <input className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  value={draft.title} onChange={e => setDraft({ ...draft, title: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 block mb-1">설명</label>
+                <textarea className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 resize-none"
+                  rows={2} value={draft.desc} onChange={e => setDraft({ ...draft, desc: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 block mb-1">이미지 URL</label>
+                <input className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  placeholder="https://..." value={draft.imageUrl} onChange={e => setDraft({ ...draft, imageUrl: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 block mb-1">배경 색상</label>
+                <div className="flex items-center gap-2">
+                  <input type="color" className="w-8 h-8 rounded cursor-pointer border border-gray-200"
+                    value={draft.bgColor} onChange={e => setDraft({ ...draft, bgColor: e.target.value })} />
+                  <span className="text-xs text-gray-400">{draft.bgColor}</span>
+                </div>
+              </div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={draft.visible} onChange={e => setDraft({ ...draft, visible: e.target.checked })} />
+                <span className="text-sm text-gray-600">배너 표시</span>
+              </label>
+            </div>
+            <div className="flex gap-2 mt-5 justify-end">
+              <button onClick={() => setEditing(false)}
+                className="px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 rounded-lg">취소</button>
+              <button onClick={save}
+                className="px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-700">저장</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // 히어로 배너
 // ══════════════════════════════════════════════════════════════════════════════
 function HeroBanner({ currentUser, isWriter, postCount, onLoginPrompt, onWriteClick }) {
@@ -569,12 +695,13 @@ function HeroBanner({ currentUser, isWriter, postCount, onLoginPrompt, onWriteCl
 // ══════════════════════════════════════════════════════════════════════════════
 // 피드 뷰
 // ══════════════════════════════════════════════════════════════════════════════
-function FeedView({ posts, loading, currentUser, isWriter, onPostClick, onAuthorClick, onLoginPrompt, onWriteClick }) {
+function FeedView({ posts, loading, currentUser, isWriter, isAdmin, onPostClick, onAuthorClick, onLoginPrompt, onWriteClick }) {
   const featured = posts[0];
   const rest = posts.slice(1);
 
   return (
     <div>
+      <TopBanner isAdmin={isAdmin} />
       <HeroBanner
         currentUser={currentUser}
         isWriter={isWriter}
@@ -669,6 +796,7 @@ function PostCard({ post, variant = "grid", currentUser, onClick, onAuthorClick 
               <button className="text-lg hover:scale-110 transition-transform" onClick={(e) => { e.stopPropagation(); onAuthorClick(post.authorId); }}>{post.author.avatar}</button>
               <button className="text-sm font-medium text-gray-700 hover:underline" onClick={(e) => { e.stopPropagation(); onAuthorClick(post.authorId); }}>{post.author.name}</button>
               {isMyPost && <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">내 글</span>}
+              {post.visibility === "members" && <span className="text-[10px] bg-violet-50 text-violet-500 px-2 py-0.5 rounded-full">🔒 독자전용</span>}
               <span className="text-gray-300">·</span>
               <span className="text-xs text-gray-400">{post.date}</span>
             </div>
@@ -703,6 +831,7 @@ function PostCard({ post, variant = "grid", currentUser, onClick, onAuthorClick 
           <button className="text-sm hover:scale-110 transition-transform" onClick={(e) => { e.stopPropagation(); onAuthorClick(post.authorId); }}>{post.author.avatar}</button>
           <button className="text-xs font-medium text-gray-600 hover:underline" onClick={(e) => { e.stopPropagation(); onAuthorClick(post.authorId); }}>{post.author.name}</button>
           {isMyPost && <span className="text-[9px] bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full">내 글</span>}
+          {post.visibility === "members" && <span className="text-[9px] bg-violet-50 text-violet-500 px-1.5 py-0.5 rounded-full">🔒</span>}
           <span className="text-gray-300 text-xs">·</span>
           <span className="text-[11px] text-gray-400">{post.date}</span>
         </div>
@@ -874,6 +1003,12 @@ function WriteView({ draft, editingPost, onChange, onPublish, onBack }) {
         <div className="flex items-center gap-3">
           {editingPost && <span className="text-xs text-amber-500 bg-amber-50 px-2.5 py-1 rounded-full">수정 중</span>}
           {draft.content && <span className="text-xs text-gray-400">약 {readTime}분</span>}
+          {/* 공개 범위 토글 */}
+          <button
+            onClick={() => onChange("visibility", draft.visibility === "members" ? "public" : "members")}
+            className={`text-xs px-3 py-2 rounded-full border transition-all font-sans ${draft.visibility === "members" ? "bg-violet-500 text-white border-violet-500" : "border-gray-200 text-gray-400 hover:border-gray-400"}`}>
+            {draft.visibility === "members" ? "🔒 독자만" : "🌐 전체공개"}
+          </button>
           <button onClick={handlePublish} disabled={!canPublish || publishing}
             className="text-sm px-5 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
             {publishing ? "저장 중…" : editingPost ? "수정 완료" : "발행하기"}
@@ -1210,6 +1345,14 @@ function AdminView({ currentUser, onBack }) {
     setUsers((prev) => prev.filter((u) => u.id !== id));
   };
 
+  const handleToggleAdmin = async (id) => {
+    const u = users.find((u) => u.id === id);
+    const msg = u?.is_admin ? "어드민 권한을 해제할까요?" : "이 유저를 어드민으로 지정할까요?";
+    if (!window.confirm(msg)) return;
+    const updated = await api.put(`/api/admin/users/${id}/toggle-admin`, {});
+    setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)));
+  };
+
   const filtered = users.filter((u) => {
     if (filter === "pending") return u.role === "writer" && u.status === "pending";
     if (filter === "writer") return u.role === "writer";
@@ -1304,6 +1447,12 @@ function AdminView({ currentUser, onBack }) {
                   <button onClick={() => handleApprove(u.id)}
                     className="text-xs px-3 py-1.5 border border-emerald-200 text-emerald-500 rounded-full hover:bg-emerald-50 transition-all">
                     재승인
+                  </button>
+                )}
+                {u.id !== currentUser?.id && (
+                  <button onClick={() => handleToggleAdmin(u.id)}
+                    className={`text-xs px-3 py-1.5 border rounded-full transition-all ${u.is_admin ? "border-indigo-200 text-indigo-400 hover:bg-indigo-50" : "border-gray-200 text-gray-400 hover:border-indigo-300 hover:text-indigo-500"}`}>
+                    {u.is_admin ? "👑 어드민 해제" : "👑 어드민 지정"}
                   </button>
                 )}
                 {!u.is_admin && u.id !== currentUser?.id && (

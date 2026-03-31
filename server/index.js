@@ -64,6 +64,7 @@ function formatPost(p) {
     likes: p.likes || 0,
     author: { name: p.author_name, avatar: p.author_avatar, bio: p.author_bio },
     updatedAt: p.updated_at,
+    visibility: p.visibility || 'public',
   };
 }
 
@@ -197,6 +198,17 @@ app.put('/api/admin/users/:id/reject', adminAuth, (req, res) => {
   res.json(safeUser(user));
 });
 
+// 어드민 권한 토글
+app.put('/api/admin/users/:id/toggle-admin', adminAuth, (req, res) => {
+  const id = Number(req.params.id);
+  if (id === req.user.id) return res.status(400).json({ error: '본인의 어드민 권한은 변경할 수 없습니다.' });
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(id);
+  if (!user) return res.status(404).json({ error: '유저를 찾을 수 없습니다.' });
+  const newVal = user.is_admin ? 0 : 1;
+  db.prepare('UPDATE users SET is_admin = ? WHERE id = ?').run(newVal, id);
+  res.json(safeUser(db.prepare('SELECT * FROM users WHERE id = ?').get(id)));
+});
+
 // 유저 삭제
 app.delete('/api/admin/users/:id', adminAuth, (req, res) => {
   const id = Number(req.params.id);
@@ -229,9 +241,21 @@ app.get('/api/users/:id/posts', (req, res) => {
 // ══════════════════════════════════════════════════════════════════════════════
 
 app.get('/api/posts', (req, res) => {
+  // 로그인 여부 확인 (토큰 있으면 검증)
+  let isMember = false;
+  const token = req.headers.authorization?.split(' ')[1];
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      const u = db.prepare('SELECT status FROM users WHERE id = ?').get(decoded.id);
+      if (u?.status === 'approved') isMember = true;
+    } catch { /* 무효 토큰 무시 */ }
+  }
+
   const posts = db.prepare(`
     SELECT p.*, u.name as author_name, u.avatar as author_avatar, u.bio as author_bio
     FROM posts p JOIN users u ON p.author_id = u.id
+    ${isMember ? '' : "WHERE p.visibility = 'public'"}
     ORDER BY p.created_at DESC
   `).all();
   res.json(posts.map(formatPost));
@@ -244,16 +268,17 @@ app.post('/api/posts', auth, (req, res) => {
   if (user.status !== 'approved')
     return res.status(403).json({ error: '관리자 승인 후 글을 쓸 수 있습니다.' });
 
-  const { title, content, image, music_title, tags } = req.body;
+  const { title, content, image, music_title, tags, visibility } = req.body;
   if (!title || !content) return res.status(400).json({ error: '제목과 내용을 입력하세요.' });
 
   const excerpt = content.replace(/^#+ /gm, '').split('\n').find((l) => l.trim()) || '';
   const readTime = `${Math.max(1, Math.ceil(content.length / 300))}분`;
+  const vis = visibility === 'members' ? 'members' : 'public';
 
   const result = db.prepare(`
-    INSERT INTO posts (author_id, title, content, excerpt, image, music_title, tags, read_time)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(req.user.id, title, content, excerpt.slice(0, 100), image || null, music_title || null, JSON.stringify(tags || []), readTime);
+    INSERT INTO posts (author_id, title, content, excerpt, image, music_title, tags, read_time, visibility)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(req.user.id, title, content, excerpt.slice(0, 100), image || null, music_title || null, JSON.stringify(tags || []), readTime, vis);
 
   const post = db.prepare(`
     SELECT p.*, u.name as author_name, u.avatar as author_avatar, u.bio as author_bio
@@ -268,14 +293,15 @@ app.put('/api/posts/:id', auth, (req, res) => {
   if (!post) return res.status(404).json({ error: '글을 찾을 수 없습니다.' });
   if (post.author_id !== req.user.id) return res.status(403).json({ error: '본인 글만 수정할 수 있습니다.' });
 
-  const { title, content, image, music_title, tags } = req.body;
+  const { title, content, image, music_title, tags, visibility } = req.body;
   const excerpt = content.replace(/^#+ /gm, '').split('\n').find((l) => l.trim()) || '';
   const readTime = `${Math.max(1, Math.ceil(content.length / 300))}분`;
+  const vis = visibility === 'members' ? 'members' : 'public';
 
   db.prepare(`
-    UPDATE posts SET title=?, content=?, excerpt=?, image=?, music_title=?, tags=?, read_time=?, updated_at=CURRENT_TIMESTAMP
+    UPDATE posts SET title=?, content=?, excerpt=?, image=?, music_title=?, tags=?, read_time=?, visibility=?, updated_at=CURRENT_TIMESTAMP
     WHERE id=?
-  `).run(title, content, excerpt.slice(0, 100), image || null, music_title || null, JSON.stringify(tags || []), readTime, Number(req.params.id));
+  `).run(title, content, excerpt.slice(0, 100), image || null, music_title || null, JSON.stringify(tags || []), readTime, vis, Number(req.params.id));
 
   const updated = db.prepare(`
     SELECT p.*, u.name as author_name, u.avatar as author_avatar, u.bio as author_bio
