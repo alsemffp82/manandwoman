@@ -1,11 +1,16 @@
 import { DatabaseSync } from 'node:sqlite';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { mkdirSync } from 'node:fs';
 import bcrypt from 'bcryptjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 // Railway Volume: DB_PATH=/data/geulter.db  /  로컬: 기본값 ./geulter.db
 const dbPath = process.env.DB_PATH || join(__dirname, 'geulter.db');
+
+// DB 파일이 위치할 디렉토리가 없으면 자동 생성
+mkdirSync(dirname(dbPath), { recursive: true });
+
 const db = new DatabaseSync(dbPath);
 
 // 외래 키 활성화
