@@ -276,7 +276,7 @@ function Header({ currentUser, isWriter, isAdmin, onLogoClick, onLoginClick, onW
       <div className="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
         <button onClick={onLogoClick} className="text-xl font-bold tracking-tight text-gray-900 hover:text-gray-500 transition-colors">
           글터 <span className="text-gray-300 mx-1 font-light">|</span>
-          <span className="text-sm font-normal text-gray-400">Geulter</span>
+          <span className="text-sm font-normal text-gray-400">M&M</span>
         </button>
         <div className="flex items-center gap-2 font-sans">
           {currentUser ? (
