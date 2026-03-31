@@ -9,7 +9,7 @@
     "server:dev": "cd server && node --watch index.js",
     "build": "vite build",
     "build:railway": "vite build && cd server && npm install",
-    "start": "node server/index.js",
+    "start": "node --experimental-sqlite server/index.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
