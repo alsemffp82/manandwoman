@@ -1,15 +1,48 @@
 @import "tailwindcss";
 
-/* 글터 기본 스타일 */
-* {
-  box-sizing: border-box;
+/* ── 글터 디자인 토큰 ── */
+:root {
+  --cream:       #faf6f0;
+  --cream-dark:  #f2ebe0;
+  --cream-border:#ede5d8;
+  --brown-deep:  #2d2318;
+  --brown-mid:   #7a5c3e;
+  --brown-muted: #9c8a6e;
+  --brown-light: #c4ad94;
+  --sage:        #6b8f5e;
+  --sage-light:  #e8f0e4;
+  --amber-warm:  #c87941;
+  --card-bg:     #ffffff;
 }
+
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
   padding: 0;
+  background-color: var(--cream);
+  color: var(--brown-deep);
+  font-family: 'Nanum Gothic', 'Apple SD Gothic Neo', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-#root {
-  width: 100%;
+#root { width: 100%; }
+
+/* ── 서체 — 제목은 나눔명조, 본문은 나눔고딕 ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Nanum Myeongjo', 'Georgia', serif;
 }
+
+/* font-sans 클래스는 나눔고딕 */
+.font-sans {
+  font-family: 'Nanum Gothic', 'Apple SD Gothic Neo', sans-serif !important;
+}
+
+/* ── 스크롤바 ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--cream-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--brown-light); }
+
+/* ── 선택 영역 ── */
+::selection { background: #e8d9c0; color: var(--brown-deep); }

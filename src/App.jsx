@@ -274,51 +274,52 @@ export default function App() {
 function Header({ currentUser, isWriter, isAdmin, onLogoClick, onLoginClick, onWriteClick, onLogout, onProfileClick, onAdminClick }) {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
+    <header className="sticky top-0 z-50" style={{ background: '#fffdf9', borderBottom: '1px solid #ede5d8' }}>
       <div className="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
-        <button onClick={onLogoClick} className="text-xl font-bold tracking-tight text-gray-900 hover:text-gray-500 transition-colors">
-          글터 <span className="text-gray-300 mx-1 font-light">|</span>
-          <span className="text-sm font-normal text-gray-400">M&M</span>
+        <button onClick={onLogoClick} className="text-xl font-bold tracking-tight transition-colors" style={{ color: '#2d2318', fontFamily: "'Nanum Myeongjo', Georgia, serif", letterSpacing: '-0.5px' }}>
+          글터 <span style={{ color: '#c4ad94', margin: '0 4px', fontWeight: 300 }}>|</span>
+          <span className="text-sm font-normal" style={{ color: '#9c8a6e' }}>M&M</span>
         </button>
         <div className="flex items-center gap-2 font-sans">
           {currentUser ? (
             <>
               {isWriter && (
-                <button onClick={onWriteClick} className="text-xs px-4 py-1.5 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition-all">+ 새 글</button>
+                <button onClick={onWriteClick} className="text-xs px-4 py-1.5 rounded-full transition-all" style={{ background: '#2d2318', color: '#faf6f0' }}>+ 새 글</button>
               )}
               {isAdmin && (
-                <button onClick={onAdminClick} className="text-xs px-3 py-1.5 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-all">⚙ 관리</button>
+                <button onClick={onAdminClick} className="text-xs px-3 py-1.5 rounded-full transition-all" style={{ background: '#7a5c3e', color: '#faf6f0' }}>⚙ 관리</button>
               )}
               <div className="relative">
                 <button onClick={() => setMenuOpen((v) => !v)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-50 border border-gray-100 transition-colors">
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors"
+                  style={{ border: '1px solid #ede5d8', background: 'white' }}>
                   <span className="text-lg">{currentUser.avatar}</span>
-                  <span className="text-sm text-gray-700 font-medium">{currentUser.name}</span>
-                  <span className="text-[10px] text-gray-400">▾</span>
+                  <span className="text-sm font-medium" style={{ color: '#2d2318' }}>{currentUser.name}</span>
+                  <span className="text-[10px]" style={{ color: '#9c8a6e' }}>▾</span>
                 </button>
                 {menuOpen && (
-                  <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-lg border border-gray-100 py-1 text-sm z-50">
-                    <div className="px-4 py-2.5 border-b border-gray-50">
-                      <p className="font-semibold text-gray-800 text-sm">{currentUser.name}</p>
-                      <p className="text-gray-400 text-xs mt-0.5">{currentUser.email}</p>
+                  <div className="absolute right-0 mt-2 w-52 rounded-xl shadow-lg py-1 text-sm z-50" style={{ background: '#fffdf9', border: '1px solid #ede5d8' }}>
+                    <div className="px-4 py-2.5" style={{ borderBottom: '1px solid #f2ebe0' }}>
+                      <p className="font-semibold text-sm" style={{ color: '#2d2318' }}>{currentUser.name}</p>
+                      <p className="text-xs mt-0.5" style={{ color: '#9c8a6e' }}>{currentUser.email}</p>
                       <div className="flex gap-1 mt-1.5 flex-wrap">
-                        <span className={`text-[10px] px-2 py-0.5 rounded-full inline-block ${isWriter ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-500"}`}>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full inline-block" style={{ background: '#e8f0e4', color: '#6b8f5e' }}>
                           {isWriter ? "✍️ 작가" : "👁 독자"}
                         </span>
-                        {isAdmin && <span className="text-[10px] px-2 py-0.5 rounded-full inline-block bg-indigo-50 text-indigo-600">👑 어드민</span>}
-                        {currentUser.status === "pending" && <span className="text-[10px] px-2 py-0.5 rounded-full inline-block bg-amber-50 text-amber-600">⏳ 승인 대기</span>}
+                        {isAdmin && <span className="text-[10px] px-2 py-0.5 rounded-full inline-block" style={{ background: '#f2ebe0', color: '#7a5c3e' }}>👑 어드민</span>}
+                        {currentUser.status === "pending" && <span className="text-[10px] px-2 py-0.5 rounded-full inline-block" style={{ background: '#fef3e2', color: '#c87941' }}>⏳ 승인 대기</span>}
                       </div>
                     </div>
-                    <button onClick={() => { onProfileClick(); setMenuOpen(false); }} className="w-full text-left px-4 py-2.5 hover:bg-gray-50 text-gray-600">내 프로필</button>
-                    {isWriter && <button onClick={() => { onWriteClick(); setMenuOpen(false); }} className="w-full text-left px-4 py-2.5 hover:bg-gray-50 text-gray-600">새 글 쓰기</button>}
-                    {isAdmin && <button onClick={() => { onAdminClick(); setMenuOpen(false); }} className="w-full text-left px-4 py-2.5 hover:bg-gray-50 text-indigo-600">⚙ 관리 페이지</button>}
-                    <button onClick={() => { onLogout(); setMenuOpen(false); }} className="w-full text-left px-4 py-2.5 hover:bg-gray-50 text-red-400">로그아웃</button>
+                    <button onClick={() => { onProfileClick(); setMenuOpen(false); }} className="w-full text-left px-4 py-2.5 transition-colors" style={{ color: '#7a6e62' }} onMouseEnter={e => e.currentTarget.style.background='#f2ebe0'} onMouseLeave={e => e.currentTarget.style.background='transparent'}>내 프로필</button>
+                    {isWriter && <button onClick={() => { onWriteClick(); setMenuOpen(false); }} className="w-full text-left px-4 py-2.5 transition-colors" style={{ color: '#7a6e62' }} onMouseEnter={e => e.currentTarget.style.background='#f2ebe0'} onMouseLeave={e => e.currentTarget.style.background='transparent'}>새 글 쓰기</button>}
+                    {isAdmin && <button onClick={() => { onAdminClick(); setMenuOpen(false); }} className="w-full text-left px-4 py-2.5 transition-colors" style={{ color: '#7a5c3e' }} onMouseEnter={e => e.currentTarget.style.background='#f2ebe0'} onMouseLeave={e => e.currentTarget.style.background='transparent'}>⚙ 관리 페이지</button>}
+                    <button onClick={() => { onLogout(); setMenuOpen(false); }} className="w-full text-left px-4 py-2.5 transition-colors" style={{ color: '#b07060' }} onMouseEnter={e => e.currentTarget.style.background='#f2ebe0'} onMouseLeave={e => e.currentTarget.style.background='transparent'}>로그아웃</button>
                   </div>
                 )}
               </div>
             </>
           ) : (
-            <button onClick={onLoginClick} className="text-sm px-4 py-1.5 border border-gray-200 rounded-full hover:border-gray-500 text-gray-600 transition-all">로그인</button>
+            <button onClick={onLoginClick} className="text-sm px-4 py-1.5 rounded-full transition-all" style={{ border: '1px solid #ede5d8', color: '#7a5c3e', background: 'white' }}>로그인</button>
           )}
         </div>
       </div>
@@ -566,7 +567,7 @@ function TopBanner({ isAdmin }) {
           <div className="max-w-5xl mx-auto px-5 py-10 flex flex-col sm:flex-row items-center gap-6">
             {/* 텍스트 */}
             <div className="flex-1 text-center sm:text-left">
-              <h2 className="text-2xl sm:text-3xl font-bold leading-tight mb-2" style={{ color: '#1a1a1a', fontFamily: 'Georgia, serif' }}>
+              <h2 className="text-2xl sm:text-3xl font-bold leading-tight mb-2" style={{ color: '#1a1a1a', fontFamily: "'Nanum Myeongjo', Georgia, serif" }}>
                 {banner.title}
               </h2>
               <p className="text-sm text-gray-500 font-sans leading-relaxed max-w-md">
@@ -657,35 +658,44 @@ function TopBanner({ isAdmin }) {
 // ══════════════════════════════════════════════════════════════════════════════
 function HeroBanner({ currentUser, isWriter, postCount, onLoginPrompt, onWriteClick }) {
   return (
-    <div className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)" }}>
-      {/* 배경 dot 장식 */}
-      <div className="absolute inset-0 opacity-5" style={{
-        backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-        backgroundSize: "48px 48px"
+    <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #f2ebe0 0%, #ede5d8 60%, #e8ddd0 100%)' }}>
+      {/* 배경 텍스처 — 흩어진 점들 */}
+      <div className="absolute inset-0 opacity-30" style={{
+        backgroundImage: "radial-gradient(circle, #c4ad94 1px, transparent 1px)",
+        backgroundSize: "36px 36px"
       }} />
-      <div className="relative z-10 max-w-5xl mx-auto px-5 py-20 text-center">
-        <p className="text-xs tracking-widest text-blue-300 mb-4 font-sans uppercase">글로 연결되는 공간</p>
-        <h1 className="text-4xl sm:text-5xl font-bold text-white mb-5 leading-tight">
-          당신의 이야기를<br />써내려가세요
-        </h1>
-        <p className="text-base text-gray-400 mb-8 font-sans max-w-md mx-auto leading-relaxed">
-          누군가의 하루가 담긴 글, 오늘도 이곳에서 이어집니다.
-        </p>
-        <div className="flex items-center justify-center gap-4">
-          {!currentUser ? (
-            <button onClick={onLoginPrompt}
-              className="px-7 py-2.5 bg-white text-gray-900 rounded-full text-sm font-medium hover:bg-gray-100 transition-all font-sans shadow-lg">
-              글터 시작하기
-            </button>
-          ) : isWriter ? (
-            <button onClick={onWriteClick}
-              className="px-7 py-2.5 bg-white text-gray-900 rounded-full text-sm font-medium hover:bg-gray-100 transition-all font-sans shadow-lg">
-              ✍️ 새 글 쓰기
-            </button>
-          ) : null}
-          {postCount > 0 && (
-            <span className="text-sm text-gray-500 font-sans">글 {postCount}편</span>
-          )}
+      {/* 오른쪽 장식 원 */}
+      <div className="absolute -right-16 -top-16 rounded-full opacity-20" style={{ width: 320, height: 320, background: '#c4ad94' }} />
+      <div className="absolute -right-4 bottom-0 rounded-full opacity-10" style={{ width: 200, height: 200, background: '#7a5c3e' }} />
+
+      <div className="relative z-10 max-w-5xl mx-auto px-5 py-16 sm:py-20">
+        <div className="max-w-lg">
+          <p className="text-xs tracking-widest mb-4 font-sans uppercase" style={{ color: '#9c8a6e' }}>✦ 글로 연결되는 공간</p>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-5 leading-tight" style={{ color: '#2d2318', fontFamily: "'Nanum Myeongjo', Georgia, serif", letterSpacing: '-0.5px' }}>
+            당신의 이야기를<br />
+            <span style={{ color: '#7a5c3e' }}>써내려가세요</span>
+          </h1>
+          <p className="text-base mb-8 font-sans leading-relaxed" style={{ color: '#7a6e62' }}>
+            누군가의 하루가 담긴 글,<br />오늘도 이곳에서 이어집니다.
+          </p>
+          <div className="flex items-center gap-4 flex-wrap">
+            {!currentUser ? (
+              <button onClick={onLoginPrompt}
+                className="px-7 py-2.5 rounded-full text-sm font-medium transition-all font-sans shadow-sm"
+                style={{ background: '#2d2318', color: '#faf6f0' }}>
+                글터 시작하기
+              </button>
+            ) : isWriter ? (
+              <button onClick={onWriteClick}
+                className="px-7 py-2.5 rounded-full text-sm font-medium transition-all font-sans shadow-sm"
+                style={{ background: '#2d2318', color: '#faf6f0' }}>
+                ✍️ 새 글 쓰기
+              </button>
+            ) : null}
+            {postCount > 0 && (
+              <span className="text-sm font-sans" style={{ color: '#9c8a6e' }}>글 {postCount}편</span>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -794,22 +804,22 @@ function PostCard({ post, variant = "grid", currentUser, onClick, onAuthorClick 
           <div className="flex-1 min-w-0 flex flex-col justify-center py-2">
             <div className="flex items-center gap-2 mb-4 font-sans">
               <button className="text-lg hover:scale-110 transition-transform" onClick={(e) => { e.stopPropagation(); onAuthorClick(post.authorId); }}>{post.author.avatar}</button>
-              <button className="text-sm font-medium text-gray-700 hover:underline" onClick={(e) => { e.stopPropagation(); onAuthorClick(post.authorId); }}>{post.author.name}</button>
-              {isMyPost && <span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">내 글</span>}
-              {post.visibility === "members" && <span className="text-[10px] bg-violet-50 text-violet-500 px-2 py-0.5 rounded-full">🔒 독자전용</span>}
-              <span className="text-gray-300">·</span>
-              <span className="text-xs text-gray-400">{post.date}</span>
+              <button className="text-sm font-medium hover:underline" style={{ color: '#2d2318' }} onClick={(e) => { e.stopPropagation(); onAuthorClick(post.authorId); }}>{post.author.name}</button>
+              {isMyPost && <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: '#e8f0e4', color: '#6b8f5e' }}>내 글</span>}
+              {post.visibility === "members" && <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: '#f2ebe0', color: '#9c8a6e' }}>🔒 독자전용</span>}
+              <span style={{ color: '#c4ad94' }}>·</span>
+              <span className="text-xs" style={{ color: '#9c8a6e' }}>{post.date}</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 group-hover:text-gray-500 transition-colors leading-snug mb-4">{post.title}</h2>
-            <p className="text-gray-500 text-base leading-relaxed mb-5 font-sans line-clamp-3">{post.excerpt}</p>
-            <div className="flex items-center gap-3 text-xs text-gray-400 font-sans flex-wrap">
-              {post.music && <span className="text-purple-400">🎵 {post.music.title}</span>}
+            <h2 className="text-2xl sm:text-3xl font-bold transition-colors leading-snug mb-4" style={{ color: '#2d2318', fontFamily: "'Nanum Myeongjo', Georgia, serif" }}>{post.title}</h2>
+            <p className="text-base leading-relaxed mb-5 font-sans line-clamp-3" style={{ color: '#7a6e62' }}>{post.excerpt}</p>
+            <div className="flex items-center gap-3 text-xs font-sans flex-wrap" style={{ color: '#9c8a6e' }}>
+              {post.music && <span style={{ color: '#c87941' }}>🎵 {post.music.title}</span>}
               <span>⏱ {post.readTime}</span>
-              <button className={`flex items-center gap-1 hover:text-red-400 transition-colors ${liked ? "text-red-400" : ""}`}
+              <button className={`flex items-center gap-1 transition-colors ${liked ? "text-red-400" : ""}`}
                 onClick={(e) => { e.stopPropagation(); setLiked((v) => !v); }}>
                 {liked ? "❤️" : "🤍"} {post.likes + (liked ? 1 : 0)}
               </button>
-              {post.tags.slice(0, 2).map((tag) => <span key={tag} className="bg-gray-100 px-2 py-0.5 rounded-full">{tag}</span>)}
+              {post.tags.slice(0, 2).map((tag) => <span key={tag} className="px-2 py-0.5 rounded-full" style={{ background: '#f2ebe0', color: '#9c8a6e' }}>{tag}</span>)}
             </div>
           </div>
         </div>
@@ -820,30 +830,30 @@ function PostCard({ post, variant = "grid", currentUser, onClick, onAuthorClick 
   // grid variant
   return (
     <article className="group cursor-pointer flex flex-col" onClick={onClick}>
-      <div className="overflow-hidden rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0 mb-4 flex items-center justify-center" style={{ height: "180px" }}>
+      <div className="overflow-hidden rounded-xl flex-shrink-0 mb-4 flex items-center justify-center" style={{ height: "180px", background: 'linear-gradient(135deg, #f2ebe0, #ede5d8)' }}>
         {post.image
           ? <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          : <span className="text-4xl opacity-20">✍️</span>
+          : <span className="text-4xl" style={{ opacity: 0.3 }}>✍️</span>
         }
       </div>
       <div className="flex-1 flex flex-col">
         <div className="flex items-center gap-1.5 mb-2 font-sans">
           <button className="text-sm hover:scale-110 transition-transform" onClick={(e) => { e.stopPropagation(); onAuthorClick(post.authorId); }}>{post.author.avatar}</button>
-          <button className="text-xs font-medium text-gray-600 hover:underline" onClick={(e) => { e.stopPropagation(); onAuthorClick(post.authorId); }}>{post.author.name}</button>
-          {isMyPost && <span className="text-[9px] bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full">내 글</span>}
-          {post.visibility === "members" && <span className="text-[9px] bg-violet-50 text-violet-500 px-1.5 py-0.5 rounded-full">🔒</span>}
-          <span className="text-gray-300 text-xs">·</span>
-          <span className="text-[11px] text-gray-400">{post.date}</span>
+          <button className="text-xs font-medium hover:underline" style={{ color: '#7a5c3e' }} onClick={(e) => { e.stopPropagation(); onAuthorClick(post.authorId); }}>{post.author.name}</button>
+          {isMyPost && <span className="text-[9px] px-1.5 py-0.5 rounded-full" style={{ background: '#e8f0e4', color: '#6b8f5e' }}>내 글</span>}
+          {post.visibility === "members" && <span className="text-[9px] px-1.5 py-0.5 rounded-full" style={{ background: '#f2ebe0', color: '#9c8a6e' }}>🔒</span>}
+          <span className="text-xs" style={{ color: '#c4ad94' }}>·</span>
+          <span className="text-[11px]" style={{ color: '#9c8a6e' }}>{post.date}</span>
         </div>
-        <h3 className="text-base font-bold text-gray-900 group-hover:text-gray-500 transition-colors leading-snug mb-2 line-clamp-2">{post.title}</h3>
-        <p className="text-gray-400 text-xs leading-relaxed line-clamp-2 mb-3 font-sans flex-1">{post.excerpt}</p>
-        <div className="flex items-center gap-2 text-[11px] text-gray-400 font-sans flex-wrap">
+        <h3 className="text-base font-bold transition-colors leading-snug mb-2 line-clamp-2" style={{ color: '#2d2318', fontFamily: "'Nanum Myeongjo', Georgia, serif" }}>{post.title}</h3>
+        <p className="text-xs leading-relaxed line-clamp-2 mb-3 font-sans flex-1" style={{ color: '#9c8a6e' }}>{post.excerpt}</p>
+        <div className="flex items-center gap-2 text-[11px] font-sans flex-wrap" style={{ color: '#b8a898' }}>
           <span>⏱ {post.readTime}</span>
-          <button className={`flex items-center gap-0.5 hover:text-red-400 transition-colors ${liked ? "text-red-400" : ""}`}
+          <button className={`flex items-center gap-0.5 transition-colors ${liked ? "text-red-400" : ""}`}
             onClick={(e) => { e.stopPropagation(); setLiked((v) => !v); }}>
             {liked ? "❤️" : "🤍"} {post.likes + (liked ? 1 : 0)}
           </button>
-          {post.tags.slice(0, 1).map((tag) => <span key={tag} className="bg-gray-100 px-1.5 py-0.5 rounded-full">{tag}</span>)}
+          {post.tags.slice(0, 1).map((tag) => <span key={tag} className="px-1.5 py-0.5 rounded-full" style={{ background: '#f2ebe0', color: '#9c8a6e' }}>{tag}</span>)}
         </div>
       </div>
     </article>
@@ -990,19 +1000,20 @@ function WriteView({ draft, editingPost, onChange, onPublish, onBack }) {
     <main className="max-w-3xl mx-auto px-5 py-8">
       <div className="flex items-center justify-between mb-6 font-sans">
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="text-sm text-gray-400 hover:text-gray-700 transition-colors">← 취소</button>
-          <div className="flex gap-1 bg-gray-100 rounded-full p-0.5">
+          <button onClick={onBack} className="text-sm transition-colors" style={{ color: '#9c8a6e' }}>← 취소</button>
+          <div className="flex gap-1 rounded-full p-0.5" style={{ background: '#ede5d8' }}>
             {["write", "preview"].map((t) => (
               <button key={t} onClick={() => setTab(t)}
-                className={`text-xs px-3 py-1.5 rounded-full transition-all ${tab === t ? "bg-white shadow-sm text-gray-800 font-medium" : "text-gray-400 hover:text-gray-600"}`}>
+                className="text-xs px-3 py-1.5 rounded-full transition-all"
+                style={tab === t ? { background: 'white', color: '#2d2318', fontWeight: 500, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' } : { color: '#9c8a6e' }}>
                 {t === "write" ? "✏️ 쓰기" : "👁 미리보기"}
               </button>
             ))}
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {editingPost && <span className="text-xs text-amber-500 bg-amber-50 px-2.5 py-1 rounded-full">수정 중</span>}
-          {draft.content && <span className="text-xs text-gray-400">약 {readTime}분</span>}
+          {editingPost && <span className="text-xs px-2.5 py-1 rounded-full" style={{ background: '#fef3e2', color: '#c87941' }}>수정 중</span>}
+          {draft.content && <span className="text-xs" style={{ color: '#9c8a6e' }}>약 {readTime}분</span>}
           {/* 공개 범위 토글 */}
           <button
             onClick={() => onChange("visibility", draft.visibility === "members" ? "public" : "members")}
@@ -1010,7 +1021,7 @@ function WriteView({ draft, editingPost, onChange, onPublish, onBack }) {
             {draft.visibility === "members" ? "🔒 독자만" : "🌐 전체공개"}
           </button>
           <button onClick={handlePublish} disabled={!canPublish || publishing}
-            className="text-sm px-5 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-700 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+            className="text-sm px-5 py-2 rounded-full transition-all disabled:opacity-30 disabled:cursor-not-allowed" style={{ background: '#2d2318', color: '#faf6f0' }}>
             {publishing ? "저장 중…" : editingPost ? "수정 완료" : "발행하기"}
           </button>
         </div>
@@ -1051,26 +1062,31 @@ function WriteView({ draft, editingPost, onChange, onPublish, onBack }) {
       )}
       {tab === "write" ? (
         <>
-          <div className="flex items-center gap-1 mb-3 p-2 bg-gray-50 rounded-xl font-sans flex-wrap">
+          <div className="flex items-center gap-1 mb-3 p-2 rounded-xl font-sans flex-wrap" style={{ background: '#f2ebe0' }}>
             {TOOLBAR_ITEMS.map((item) => (
               <button key={item.action} title={item.title} onClick={() => handleToolbar(item.action)}
-                className={`w-8 h-8 rounded-lg text-sm text-gray-600 hover:bg-white hover:shadow-sm transition-all flex items-center justify-center ${item.className || ""}`}>{item.label}</button>
+                className={`w-8 h-8 rounded-lg text-sm transition-all flex items-center justify-center ${item.className || ""}`}
+                style={{ color: '#7a5c3e' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.boxShadow = 'none'; }}>
+                {item.label}
+              </button>
             ))}
-            <span className="text-gray-200 mx-1">|</span>
-            <span className="text-xs text-gray-400">마크다운 지원</span>
+            <span className="mx-1" style={{ color: '#ede5d8' }}>|</span>
+            <span className="text-xs" style={{ color: '#b8a898' }}>마크다운 지원</span>
           </div>
           <textarea ref={textareaRef}
             placeholder={"당신의 이야기를 써주세요…\n\n# 제목\n## 소제목\n\n**굵게**, *기울임*, > 인용, --- 구분선"}
             value={draft.content} onChange={(e) => onChange("content", e.target.value)}
-            className="w-full min-h-96 text-[16px] text-gray-700 placeholder-gray-200 outline-none resize-none bg-transparent leading-8 font-sans"
-            style={{ border: "none" }} />
+            className="w-full min-h-96 text-[16px] outline-none resize-none bg-transparent leading-8 font-sans"
+            style={{ border: "none", color: '#2d2318' }} />
         </>
       ) : (
-        <div className="min-h-96 border border-gray-100 rounded-2xl p-6 bg-white">
-          {draft.content ? renderMarkdown(draft.content) : <p className="text-gray-300 font-sans text-sm">내용을 입력하면 미리보기가 표시됩니다.</p>}
+        <div className="min-h-96 rounded-2xl p-6" style={{ border: '1px solid #ede5d8', background: 'white' }}>
+          {draft.content ? renderMarkdown(draft.content) : <p className="font-sans text-sm" style={{ color: '#c4ad94' }}>내용을 입력하면 미리보기가 표시됩니다.</p>}
         </div>
       )}
-      <div className="mt-6 pt-5 border-t border-gray-100 font-sans">
+      <div className="mt-6 pt-5 font-sans" style={{ borderTop: '1px solid #ede5d8' }}>
         <input type="text" placeholder="태그 입력 (쉼표로 구분: 일상, 에세이)" value={draft.tags} onChange={(e) => onChange("tags", e.target.value)}
           className="w-full text-sm text-gray-500 placeholder-gray-300 outline-none bg-transparent" style={{ border: "none" }} />
         {draft.tags && (
@@ -1295,7 +1311,7 @@ function CommentSection({ postId, currentUser }) {
             />
             <div className="flex justify-end mt-2">
               <button type="submit" disabled={!text.trim() || submitting}
-                className="text-xs px-4 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-700 disabled:opacity-30 transition-all">
+                className="text-xs px-4 py-2 rounded-full disabled:opacity-30 transition-all" style={{ background: '#2d2318', color: '#faf6f0' }}>
                 {submitting ? "등록 중…" : "댓글 달기"}
               </button>
             </div>
